@@ -1,0 +1,183 @@
+MedView Data Pipeline — Technical Summary
+
+Overview
+This part sets up a semantic retrieval pipeline that:
+- Embeds device-related text using OpenAI
+- Stores embeddings in AstraDB
+- Enables similarity-based Q&A using LangChain
+
+ Environment Setup
+Loads credentials from environment variables via `.env`:
+- ASTRA_DB_API_ENDPOINT
+- ASTRA_DB_APPLICATION_TOKEN
+- OPENAI_API_KEY
+
+ Key Libraries
+- langchain_openai: For text embeddings
+- langchain_astradb: AstraDB vector storage
+- langchain_text_splitters: Chunking long text
+- langchain.chains: Retrieval + LLM chaining
+
+Workflow
+1. Embed Text  
+   Uses `OpenAIEmbeddings("text-embedding-3-small")` for vectorizing text.
+
+2. Chunking  
+   Splits text into overlapping segments using `RecursiveCharacterTextSplitter`.
+
+3. Store in AstraDB  
+   Embedding chunks are saved in a collection (`mdvs`) via `AstraDBVectorStore`.
+
+4. Retrieve + Generate  
+   A retriever fetches top matching chunks; `ConversationalRetrievalChain` combines them with OpenAI's chat model to generate answers.
+
+Web Scraper
+
+Overview
+This part defines an advanced recursive web scraper for crawling links within a target domain. 
+It supports controlled depth, retry logic, and link normalization for robust and clean scraping.
+
+ Class: AdvancedWebScraper
+
+Initialization:
+  AdvancedWebScraper(base_url, max_depth=5, timeout=15)
+  - base_url: Root domain to start crawling
+  - max_depth: How deep to follow links (default: 5)
+  - timeout: Request timeout per page
+
+Key Components:
+- Normalizes domain and base scheme
+- Tracks visited pages (visited_urls)
+- Stores all valid internal links (all_links)
+
+ Networking Features
+- Uses requests with retry logic (HTTPAdapter + Retry)
+- Handles connection errors and retries with backoff
+
+ Link Extraction
+- Parses HTML using BeautifulSoup
+- Extracts and resolves <a href="..."> links
+- Filters:
+  - Internal links only (same domain)
+  - Avoids duplicates and malformed URLs
+
+ Recursive Crawling
+- Recursively crawls pages up to max_depth
+- Prevents re-visiting the same URLs
+
+ Logging & Cleanups
+- Logs scraping process
+- Sanitizes content with regex and base domain checks
+
+ Dependencies
+- requests, bs4 (BeautifulSoup), urllib, logging, re
+
+RAG Demo Data 
+ Purpose
+This file contains the full textual content of the FreeStyle Lite Blood Glucose Monitoring System Owner’s Manual.
+It is used for embedding and semantic retrieval in MedView's Retrieval-Augmented Generation (RAG) pipeline.
+
+ Content Overview
+The document includes:
+- Device setup instructions (time, date, sound, lights)
+- Step-by-step test procedure
+- Control solution instructions
+- Understanding results (normal, low, high)
+- Memory usage for averages
+- Troubleshooting error codes
+- Meter cleaning & disinfection
+- Technical specifications
+- Full bilingual content (English and Spanish)
+
+Use Case
+This document is vectorized using OpenAI embeddings and stored in AstraDB.
+The MedView system retrieves relevant passages using semantic search to answer user questions about:
+- Operating the device
+- Troubleshooting errors
+- Interpreting glucose readings
+- Using control solution
+- Cleaning or maintaining the meter
+
+
+MongoDB NoSQL Pipeline 
+Overview 
+This part populates a MongoDB Atlas collection with structured FAQ data for CPAP and other devices you like.
+The data consists of device models and associated question-answer pairs, designed for use in semantic retrieval or chatbot systems.
+
+ Core Functionality
+
+1. MongoDB Connection
+- Connects to a MongoDB Atlas cluster using a secure connection URI.
+- Verifies connection via a ping command:
+  client.admin.command('ping')
+
+2. Data Insertion
+- The insert_data() function connects to:
+  - Database: 'mdvd'
+  - Collection: 'mdve'
+- It inserts structured documents of the form:
+  {
+    "model": "AirSense 11",
+    "questions": [
+      {"question": "...", "answer": "..."},
+      ...
+    ]
+  }
+
+3. Data Format
+- model: Device name (e.g., AirSense 11, ResMed Lumis)
+- questions: A list of question/answer pairs for the model
+
+4. Error Handling
+- try/except/finally blocks manage:
+  - Connection errors
+  - Insert operation failures
+  - Safe client disconnection
+
+ Key Libraries
+- pymongo: MongoDB Python client
+- ServerApi: Ensures compatibility with MongoDB Atlas
+
+Retrieval Model 
+
+Overview
+This part sets up a Retrieval-Augmented Generation (RAG) pipeline using LangChain, OpenAI, and AstraDB.
+It retrieves semantically similar content from AstraDB and passes it to a language model to answer user queries.
+
+ Core Workflow
+
+1. Environment Setup
+- OPENAI_API_KEY: for OpenAI embedding and chat model
+- ASTRA_DB_API_ENDPOINT, ASTRA_DB_APPLICATION_TOKEN: for AstraDB connection
+- COLLECTION_NAME = "mdvs": vector collection name
+
+2. Embedding & Vector Store
+embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+vector_store = AstraDBVectorStore(
+    embedding=embeddings,
+    collection_name=COLLECTION_NAME,
+    api_endpoint=ASTRA_DB_API_ENDPOINT,
+    token=ASTRA_DB_APPLICATION_TOKEN
+)
+
+3. Retrieval + Generation
+llm = ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY)
+retriever = vector_store.as_retriever()
+qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+
+4. Query Execution
+query = "How do I clean my ResMed CPAP machine?"
+result = qa.run(query)
+print(result)
+
+Dependencies
+- langchain
+- openai
+- langchain_astradb
+- os (recommended for .env file handling)
+
+
+
+
+
+
