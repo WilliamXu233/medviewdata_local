@@ -1,0 +1,37 @@
+# ────────────────────────────────
+# LangChain ecosystem
+# ────────────────────────────────
+langchain-core==0.1.60
+langchain-openai==0.1.6
+langchain-astradb==0.1.5          # AstraDBVectorStore
+langchain-text-splitters==0.0.1
+
+# OpenAI Python SDK (called by langchain-openai)
+openai==1.24.1
+
+# ────────────────────────────────
+# MongoDB / Atlas connectivity
+# ────────────────────────────────
+pymongo[srv]==4.11.3               # “srv” extra pulls in dnspython
+dnspython==2.7.0                   # explicit pin for SRV lookups
+
+# ────────────────────────────────
+# Data / numeric stack
+# ────────────────────────────────
+pandas==2.2.2                      # used for Excel helper
+numpy==1.26.4
+openpyxl==3.1.2                    # pandas engine for .xlsx files
+
+# ────────────────────────────────
+# HTTP + HTML scraping utilities
+# ────────────────────────────────
+requests==2.31.0
+beautifulsoup4==4.12.3
+urllib3==2.2.1                     # pinned to match requests
+
+# ────────────────────────────────
+# Convenience / quality-of-life (optional but handy)
+# ────────────────────────────────
+tqdm==4.66.2                       # progress bars if you add them
+python-dotenv==1.0.1               # load env vars from .env files
+loguru==0.7.2                      # nicer logging; remove if unused
