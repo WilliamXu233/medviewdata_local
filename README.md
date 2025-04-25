@@ -1,4 +1,3 @@
-# medviewdata_local
 # MedView Data Layer
 
 This module contains the data pipeline components for the MedView project. This is a healthcare support platform that enables users to semantically search and interact with medical device documentation using language models.
@@ -103,6 +102,46 @@ qa.run("How do I clean my ResMed device?")
 ```
 
 ---
+
+#  MedView RAG Scrape Content Overview
+
+This part includes a Retrieval-Augmented Generation (RAG) demo pipeline designed to assist patients in understanding blood glucose monitoring systems using AI. It integrates document parsing, chunking, embedding, and query-based retrieval over a sample FreeStyle Lite manual.
+
+**Data Source**:  
+📄 `medviewrag_demo.txt` is derived from [this FreeStyle manual (PDF)](https://freestyleserver.com/Payloads/IFU/2017july/ART22813-003_rev-A_Web.pdf), converted to text for ingestion into a vector database.
+
+---
+
+##  Python Environment & Requirements
+
+Install the required packages in a clean virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+###  MongoDB & AstraDB Support
+
+The RAG stack uses MongoDB SRV strings and AstraDB vector store connectors. To support this:
+
+- `pymongo[srv] >= 4.11.3` ensures compatibility with MongoDB Atlas
+- `dnspython >= 2.7.0` is required for SRV DNS resolution
+
+### Key Dependencies
+
+```text
+langchain-core==0.1.46
+langchain-openai==0.1.12
+langchain-astradb==0.0.7
+langchain-text-splitters>=0.0.1
+openai>=1.24.1
+pymongo[srv]>=4.11.3
+dnspython>=2.7.0
+```
+
+> For full dependencies, see `requirements.txt`.
 
 ##  Future Work
 
