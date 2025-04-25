@@ -1,13 +1,13 @@
 # ────────────────────────────────
 # LangChain ecosystem
 # ────────────────────────────────
-langchain-core==0.1.60
-langchain-openai==0.1.6
-langchain-astradb==0.1.5          # AstraDBVectorStore
-langchain-text-splitters==0.0.1
+langchain-core==0.3.51
+langchain-openai==0.3.12
+langchain-astradb==0.6.0          # AstraDBVectorStore
+langchain-text-splitters==0.3.8
 
 # OpenAI Python SDK (called by langchain-openai)
-openai==1.24.1
+openai==1.70.0
 
 # ────────────────────────────────
 # MongoDB / Atlas connectivity
@@ -32,6 +32,7 @@ urllib3==2.2.1                     # pinned to match requests
 # ────────────────────────────────
 # Convenience / quality-of-life (optional but handy)
 # ────────────────────────────────
-tqdm==4.66.2                       # progress bars if you add them
+tqdm==4.66.2                       
 python-dotenv==1.0.1               # load env vars from .env files
 loguru==0.7.2                      # nicer logging; remove if unused
+
